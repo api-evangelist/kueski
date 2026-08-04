@@ -1,0 +1,79 @@
+generated: '2026-08-04'
+method: derived
+source: >-
+  Derived from the Kueski widgets.js bundle (https://cdn.kueskipay.com/widgets.js) and the
+  first-party KueskiPay Gateway WooCommerce plugin v2.4.1
+  (https://wordpress.org/plugins/kueskipay-gateway/)
+docs: https://github.com/kueski-dev/Dev-Center/wiki
+summary: >-
+  Kueski Pay runs a real, separately-hosted sandbox (referred to as "testing"/"staging") alongside
+  production, selected by a per-integration boolean rather than by key prefix. Access is gated:
+  sandbox credentials are issued by Kueski to onboarded merchants, there is no self-service
+  sign-up for a test account, and no magic test values, test identities or simulation triggers are
+  published.
+test_vs_live:
+  separation: separate hosts
+  selection_mechanism:
+  - name: Sandbox Mode
+    kind: plugin setting (checkbox)
+    surface: merchant platform plugin settings screen
+  - name: sandbox
+    kind: query parameter on the widget loader
+    surface: 'https://cdn.kueskipay.com/widgets.js?authorization={public_key}&integration={platform}&version={version}&sandbox=true'
+  key_prefixes:
+    documented: false
+    note: >-
+      Kueski keys carry no observable test_/live_ prefix convention. A key is bound to an
+      environment implicitly; sending a production key to the testing host returns
+      {"status":"fail","code":"unauthorized","message":"invalid token provided"}. This makes
+      accidental cross-environment use easy to create and hard to diagnose.
+environments:
+- name: production
+  widget_configuration_api: https://api.kueskipay.com
+  merchant_orders_api: https://woocommerce-middleware-go.production-pay.kueski.com/api/v1
+  hosted_checkout: https://prod.kueskipay.com
+  cdn: https://cdn.kueskipay.com
+- name: sandbox
+  aliases: [testing, staging]
+  widget_configuration_api: https://testing.kueskipay.com
+  merchant_orders_api: https://woocommerce-middleware-go.staging-pay.kueski.codes/api/v1
+  note: >-
+    The sandbox order API is served from the kueski.codes domain rather than kueski.com. Merchants
+    allow-listing egress by domain must permit both.
+credentials:
+  self_service: false
+  provisioning: >-
+    Sandbox API keys are provided by Kueski's merchant operations team after merchant registration
+    at https://www.kueskipay.com/registro-comercios. There is no developer sign-up that yields test
+    keys without a commercial relationship, so the API cannot be evaluated by a developer or an
+    agent before contracting.
+  contact: operacionesb2b@kueski.com
+test_data:
+  test_users: null
+  test_phone_numbers: null
+  test_curp_rfc: null
+  test_cards: null
+  note: >-
+    None published. Kueski Pay is not a card-acquiring product — the shopper authenticates to a
+    Kueski account and is underwritten in real time — so the meaningful test fixtures would be test
+    borrower identities with pre-set credit decisions (approved / declined / limit exceeded). No
+    such fixtures are documented publicly.
+simulation:
+  decision_simulation: null
+  time_simulation: null
+  fixture_tooling: null
+  triggers: null
+  note: >-
+    No documented way to force an approval, a decline, an expiry, or a repayment-schedule
+    transition in sandbox. Verified negative — nothing was invented.
+gaps:
+- No self-service sandbox access; test credentials require merchant onboarding.
+- No published test identities or magic values to drive approved/declined outcomes.
+- No decision, time or lifecycle simulation tooling.
+- No test-vs-live key prefix, so cross-environment key mistakes surface only as a generic
+  "invalid token provided" 400.
+x-evidence:
+  fetched: '2026-08-04'
+  probes:
+  - {url: 'https://testing.kueskipay.com/v1/configurations?widget_type=product_widget', http_status: 400}
+  - {url: 'https://cdn.kueskipay.com/widgets.js', http_status: 200}

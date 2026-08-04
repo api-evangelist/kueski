@@ -1,0 +1,149 @@
+generated: '2026-08-04'
+method: derived
+source: >-
+  Derived from the Kueski widgets.js bundle (https://cdn.kueskipay.com/widgets.js), the first-party
+  KueskiPay Gateway WooCommerce plugin v2.4.1 (https://wordpress.org/plugins/kueskipay-gateway/),
+  and a live unauthenticated probe of https://api.kueskipay.com/v1/configurations
+summary: >-
+  Kueski Pay is a redirect-model BNPL payment API with a small, JSON-over-HTTPS surface. Its
+  cross-cutting semantics are thin: bearer-key auth, a non-standard success/fail response envelope,
+  a per-request correlation id emitted by the Istio/Envoy edge, a URI-path API version, a family of
+  proprietary kp-* client-telemetry request headers, and polling rather than webhooks for order
+  state. There is no documented idempotency contract, no pagination, no rate-limit signaling and no
+  field expansion.
+transport:
+  protocol: HTTPS
+  formats: [application/json]
+  content_type_request: application/json
+  accept: application/json
+  gateway: istio-envoy (observed in the server response header)
+authentication:
+  style: http-bearer
+  header: 'Authorization: Bearer {merchant_api_key}'
+  detail: authentication/kueski-authentication.yml
+  exception: >-
+    GET /api/v1/merchant/validate-keys takes the key as an ?api_key= query parameter instead of a
+    header.
+versioning:
+  scheme: uri-path
+  current: v1
+  observed:
+  - https://api.kueskipay.com/v1/configurations
+  - https://woocommerce-middleware-go.production-pay.kueski.com/api/v1/order/create
+  policy_published: false
+  note: >-
+    v1 is the only version ever observed. Kueski publishes no versioning policy, no version-support
+    window and no dated release train.
+idempotency:
+  supported: false
+  header: null
+  note: >-
+    No Idempotency-Key header, no client-supplied request key, and no documented replay semantics on
+    POST /api/v1/order/create or POST /api/v1/order/refund. The CORS
+    access-control-allow-headers list advertised by the edge enumerates every header the API
+    accepts and contains no idempotency header. For a payments API where order creation and refunds
+    are money-moving POSTs over a 120-second client timeout, this is the single most consequential
+    missing convention: a client retry after a timeout can create a duplicate order or a duplicate
+    refund with no server-side protection. NOTE — because idempotency is genuinely absent, no
+    `type: Idempotency` pointer is wired in apis.yml. This is a real gap, not a scoring omission.
+pagination:
+  supported: false
+  note: >-
+    No list operations are exposed. Order status is retrieved by POSTing an explicit set of payment
+    ids to /api/v1/orders-sync, so there is no collection to page.
+request_tracing:
+  supported: true
+  response_header: request-id
+  example_observed: 8dbb0b574ece4445
+  note: >-
+    The Istio/Envoy edge returns a request-id on every response, including error responses. It is
+    not documented, and there is no documented way for a merchant to hand that id to support, but it
+    is present and usable for correlation.
+  also_observed:
+  - x-envoy-upstream-service-time
+client_telemetry_headers:
+  note: >-
+    Kueski's first-party plugins send a proprietary kp-* header family identifying the integration.
+    The edge CORS policy explicitly allows these, so they are part of the public contract.
+  headers:
+  - {name: kp-identifier, purpose: unique integration/merchant install identifier}
+  - {name: kp-name, purpose: integration name (e.g. the plugin identifier)}
+  - {name: kp-version, purpose: integration version}
+  - {name: kp-source, purpose: 'origin surface: web | mobile'}
+  - {name: kp-trigger, purpose: 'what initiated the call, e.g. rendered_button'}
+  - {name: kp-wp-version, purpose: host platform version (WordPress)}
+  - {name: kp-wc-version, purpose: host platform version (WooCommerce)}
+  - {name: kp-php-version, purpose: host runtime version}
+  advertised_via_cors: >-
+    access-control-allow-headers: Authorization, Content-Type, Accept, Accept-Encoding, User-Agent,
+    Origin, Referer, Kp-Name, Kp-Version, Kp-Source, Kp-Trigger, Kueski-Authorization,
+    X-SF-CC-Authorization
+  additional_auth_headers_advertised:
+  - {name: Kueski-Authorization, note: alternate credential header accepted by the edge}
+  - {name: X-SF-CC-Authorization, note: Salesforce Commerce Cloud integration credential header}
+error_envelope:
+  format: proprietary
+  rfc9457: false
+  content_type: application/json
+  shape:
+    status: 'fail | success'
+    code: machine-readable error slug (e.g. unauthorized)
+    message: human-readable message, sometimes localized to Spanish
+  observed:
+  - '{"status":"fail","code":"unauthorized","message":"no token provided"}'
+  - '{"status":"fail","code":"unauthorized","message":"invalid token provided"}'
+  detail: errors/kueski-problem-types.yml
+  note: >-
+    The envelope is not RFC 9457 problem+json, carries no type URI, and — critically — does not use
+    the HTTP status code to convey the error class. Authentication failures are returned as 400.
+rate_limiting:
+  documented: false
+  headers_observed: []
+  note: >-
+    No RateLimit / X-RateLimit / Retry-After headers were returned on any observed response, and no
+    rate-limit policy is published. A client cannot back off cooperatively.
+events:
+  webhooks: false
+  asyncapi: false
+  model: polling
+  note: >-
+    Kueski publishes no webhook or callback-notification surface. Merchants learn about order state
+    changes by polling POST /api/v1/orders-sync with a batch of payment ids; the first-party
+    WooCommerce plugin ships a WP-Cron job to do exactly this. Consequently no asyncapi/ artifact
+    and no `type: Webhooks` pointer are emitted — the event surface genuinely does not exist.
+checkout_model:
+  style: redirect / hosted
+  note: >-
+    POST /api/v1/order/create returns data.callback_url; the merchant redirects the shopper to that
+    Kueski-hosted URL to complete authentication and repayment-plan selection. Merchant sites never
+    handle Kueski credentials or repayment data directly.
+environments:
+  detail: sandbox/kueski-sandbox.yml
+  production:
+    widget_configuration_api: https://api.kueskipay.com
+    merchant_orders_api: https://woocommerce-middleware-go.production-pay.kueski.com/api/v1
+  sandbox:
+    widget_configuration_api: https://testing.kueskipay.com
+    merchant_orders_api: https://woocommerce-middleware-go.staging-pay.kueski.codes/api/v1
+  selection: >-
+    A per-integration "Sandbox Mode" boolean in the merchant's plugin settings, and a
+    sandbox=true|false query parameter on the widgets.js loader. There are no distinguishable
+    test-vs-live key prefixes.
+cross_links:
+  authentication: authentication/kueski-authentication.yml
+  errors: errors/kueski-problem-types.yml
+  lifecycle: lifecycle/kueski-lifecycle.yml
+  sandbox: sandbox/kueski-sandbox.yml
+  conformance: conformance/kueski-conformance.yml
+gaps:
+- No idempotency key on money-moving POST operations.
+- No rate-limit signaling of any kind.
+- No webhooks; order state requires merchant-run polling.
+- Error envelope decoupled from HTTP status semantics (auth failures return 400).
+- The kp-* header family and the request-id correlation header are real but undocumented.
+x-evidence:
+  fetched: '2026-08-04'
+  probes:
+  - {url: 'https://api.kueskipay.com/v1/configurations?widget_type=product_widget', http_status: 400, content_type: application/json}
+  - {url: 'https://cdn.kueskipay.com/widgets.js', http_status: 200}
+  - {url: 'https://wordpress.org/plugins/kueskipay-gateway/', http_status: 200}

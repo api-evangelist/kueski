@@ -1,0 +1,88 @@
+generated: '2026-08-04'
+method: searched
+source: >-
+  Registry searches across npm, PyPI, Packagist, RubyGems and crates.io; the WordPress.org plugin
+  directory; the VTEX App Store; and https://www.kueskipay.com/guias-de-integracion
+summary: >-
+  Kueski ships no conventional server-side API client library in any language. Its distribution
+  model is e-commerce platform plugins plus a browser widget bundle: a merchant installs a
+  first-party plugin for their storefront platform, or drops in the widgets.js script. Searches of
+  npm, PyPI, Packagist, RubyGems and crates.io return no first-party Kueski client library. The
+  packages below are the real, first-party, publicly distributable artifacts Kueski does publish.
+packages:
+- language: php
+  registry: wordpress.org
+  name: kueskipay-gateway
+  display_name: KueskiPay Gateway
+  version: 2.4.1
+  released: '2026-01-14'
+  url: https://wordpress.org/plugins/kueskipay-gateway/
+  download: https://downloads.wordpress.org/plugin/kueskipay-gateway.zip
+  install: Install "KueskiPay Gateway" from the WordPress plugin directory
+  official: true
+  official_evidence: 'Plugin header — Author: Kueski, Author URI: https://www.kueski.com/'
+  license: GPL-2.0
+  kind: platform-plugin
+  platform: WooCommerce
+  requires: {wordpress: '>=6.2', php: '>=7.4', woocommerce: '>=7.6'}
+  note: >-
+    The most complete public expression of the Kueski Pay merchant API contract — it implements
+    merchant/validate-keys, order/create, orders-sync and order/refund against both the production
+    and staging hosts.
+- language: javascript
+  registry: cdn
+  name: widgets.js
+  display_name: Kueski Pay Widgets
+  url: https://cdn.kueskipay.com/widgets.js
+  install: >-
+    <script src="https://cdn.kueskipay.com/widgets.js?authorization={public_key}&integration={platform}&version={version}&sandbox={true|false}"></script>
+  official: true
+  official_evidence: Served from Kueski's own cdn.kueskipay.com and referenced by every first-party plugin
+  kind: browser-bundle
+  note: >-
+    Distributed only from Kueski's CDN — not published to npm, unversioned in the URL path, and
+    with no integrity hash or SRI guidance. Registers the kueskipay-widget and kueskipay-modal
+    custom elements. See components/kueski-components.yml.
+- language: javascript
+  registry: vtex-app-store
+  name: kueskiio-script-pixel
+  display_name: Kueski Pay (VTEX IO)
+  url: https://apps.vtex.com/kueskiio-script-pixel/p
+  official: true
+  official_evidence: Published on the VTEX App Store by KueskiPay as a VTEX Partner
+  kind: platform-app
+  platform: VTEX IO
+platform_integrations_without_public_packages:
+  note: >-
+    Kueski documents installation guides for these platforms but does not distribute the module
+    through a public package registry — merchants obtain them through the platform's own app store
+    or from Kueski directly.
+  platforms:
+  - {platform: Shopify, guide: 'https://github.com/kueski-dev/Dev-Center/wiki/Shopify'}
+  - {platform: Magento, guide: 'https://github.com/kueski-dev/Dev-Center/wiki/Magento'}
+  - {platform: PrestaShop, guide: 'https://github.com/kueski-dev/Dev-Center/wiki/PrestaShop'}
+  - {platform: Tiendanube, guide: 'https://github.com/kueski-dev/Dev-Center/wiki/Tiendanube'}
+  - {platform: T1 Paginas, guide: 'https://github.com/kueski-dev/Dev-Center/wiki/T1-P%C3%A1ginas'}
+registries_searched:
+- {registry: npm, query: kueski, first_party_client_libraries: 0, note: 'Only kueskipay-amon-cli, an internal admin utility published by an individual Kueski employee in 2022 (v0.0.2, no bin entry, personal repository) — not a developer-facing product'}
+- {registry: pypi, query: 'kueski / kueski-pay / kueskipay', first_party_client_libraries: 0}
+- {registry: packagist, query: 'kueski / kueskipay', first_party_client_libraries: 0}
+- {registry: rubygems, query: kueski, first_party_client_libraries: 0}
+- {registry: crates.io, query: kueski, first_party_client_libraries: 0}
+- {registry: maven-central, query: kueski, first_party_client_libraries: 0}
+- {registry: nuget, query: kueski, first_party_client_libraries: 0}
+- {registry: pkg.go.dev, query: kueski, first_party_client_libraries: 0}
+gaps:
+- No server-side SDK in any language. A merchant not on one of the seven supported storefront
+  platforms must hand-roll HTTP against an API that has no published specification.
+- widgets.js is unversioned at the URL and offers no SRI/integrity hash, so merchants embed a
+  mutable third-party script into their checkout with no pinning option.
+- No public source repository for any of the plugins; the WooCommerce plugin's source is only
+  obtainable by unpacking the distributed WordPress.org zip.
+x-evidence:
+  fetched: '2026-08-04'
+  probes:
+  - {url: 'https://wordpress.org/plugins/kueskipay-gateway/', http_status: 200}
+  - {url: 'https://cdn.kueskipay.com/widgets.js', http_status: 200, bytes: 46400}
+  - {url: 'https://apps.vtex.com/kueskiio-script-pixel/p', http_status: 200}
+  - {url: 'https://registry.npmjs.org/-/v1/search?text=kueski', http_status: 200}

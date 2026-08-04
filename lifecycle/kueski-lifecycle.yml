@@ -1,0 +1,77 @@
+generated: '2026-08-04'
+method: searched
+source: >-
+  https://status.kueski.com/ , the KueskiPay Gateway WooCommerce plugin changelog
+  (https://wordpress.org/plugins/kueskipay-gateway/), and live probes of the Kueski Pay API hosts
+versioning:
+  scheme: uri-path
+  current: v1
+  policy_url: null
+  policy_published: false
+  note: >-
+    Every observed endpoint sits under a /v1 path segment. Kueski publishes no versioning policy, no
+    support window for older versions, and no notice mechanism for breaking changes. In practice the
+    versioned artifact merchants track is the plugin version, not the API version.
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  note: >-
+    No RFC 8594 Sunset or Deprecation headers were observed on any response, and no deprecation
+    policy is published. No `type: Deprecation` pointer is wired in apis.yml because no deprecation
+    policy exists — this is a gap, not an omitted pointer.
+status_page:
+  url: https://status.kueski.com/
+  provider: Atlassian Statuspage
+  components:
+  - name: Kueski Pay Service
+    description: Purchase transactions and loan offers
+  uptime_90_day: '99.79%'
+  subscriptions: [email, sms, slack, rss-atom]
+  incident_history: true
+  scheduled_maintenance: true
+  note: >-
+    A real, subscribable status page with historical incidents and a published 90-day uptime figure.
+    It monitors the Kueski Pay service as a whole rather than per-API components, and recent
+    incidents also reference the upstream Circulo de Credito bureau dependency.
+sla:
+  url: null
+  uptime_target: null
+  published: false
+  note: >-
+    No public SLA or uptime commitment. The 99.79% figure on the status page is a retrospective
+    measurement, not a contractual target.
+support:
+  help_center: https://preguntas.frecuentes.kueski.com/hc/es/categories/14632860970907-Kueski-Pay
+  b2b_help_center: https://kueskib2b.zendesk.com/hc/es-mx
+  merchant_operations_email: operacionesb2b@kueski.com
+  hours: 08:00-21:30 CT, seven days a week
+  channels: [email, whatsapp, help-center]
+  note: >-
+    The public help centers sit behind a Cloudflare interstitial and return 403 to unauthenticated
+    programmatic fetches, so their contents are not machine-readable.
+integration_lifecycle:
+  note: >-
+    The de-facto lifecycle surface for developers is the per-platform plugin release stream rather
+    than the API. See changelog/kueski-changelog.yml.
+  channels:
+  - {platform: WooCommerce, distribution: 'https://wordpress.org/plugins/kueskipay-gateway/', current_version: 2.4.1}
+  - {platform: VTEX IO, distribution: 'https://apps.vtex.com/kueskiio-script-pixel/p'}
+  - {platform: Shopify, distribution: Shopify App Store}
+  - {platform: Magento, distribution: 'https://github.com/kueski-dev/Dev-Center/wiki/Magento'}
+  - {platform: PrestaShop, distribution: 'https://github.com/kueski-dev/Dev-Center/wiki/PrestaShop'}
+  - {platform: Tiendanube, distribution: 'https://github.com/kueski-dev/Dev-Center/wiki/Tiendanube'}
+  - {platform: T1 Paginas, distribution: 'https://github.com/kueski-dev/Dev-Center/wiki/T1-P%C3%A1ginas'}
+deprecated_operations: []
+gaps:
+- No API versioning policy and no breaking-change notification mechanism.
+- No deprecation policy and no Sunset/Deprecation header support.
+- No published SLA or uptime commitment.
+- Status page covers the service, not individual API components.
+x-evidence:
+  fetched: '2026-08-04'
+  probes:
+  - {url: 'https://status.kueski.com/', http_status: 200}
+  - {url: 'https://preguntas.frecuentes.kueski.com/', http_status: 403, note: Cloudflare challenge}
+  - {url: 'https://kueskib2b.zendesk.com/hc/es-mx', http_status: 403, note: Cloudflare challenge}

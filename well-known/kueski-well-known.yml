@@ -1,0 +1,87 @@
+generated: '2026-08-04'
+method: probed
+source: live GET probes of /.well-known/* across every Kueski host in apis.yml
+summary: >-
+  No /.well-known/ discovery documents are published on any Kueski host. Every canonical path
+  returns HTTP 404 on the marketing hosts, the merchant portal, the widget/configuration API host,
+  the sandbox host and the merchant orders host. There is no security.txt (RFC 9116), no OIDC or
+  OAuth authorization-server metadata (Kueski Pay uses opaque bearer merchant API keys, not OAuth),
+  no api-catalog (RFC 9727), no ai-plugin.json and no A2A agent card. Recorded as a verified
+  negative, not an omission.
+hosts:
+- host: https://www.kueski.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 404}
+- host: https://www.kueskipay.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 404}
+- host: https://negocios.kueski.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 404}
+- host: https://api.kueskipay.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 404}
+- host: https://testing.kueskipay.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 404}
+- host: https://woocommerce-middleware-go.production-pay.kueski.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 404}
+gaps:
+- id: security-txt
+  note: >-
+    No /.well-known/security.txt on any host. For a regulated SOFOM E.N.R. handling consumer credit
+    data, an RFC 9116 security.txt naming a security contact and disclosure policy is the single
+    cheapest publication Kueski could make.
+- id: agent-card
+  note: >-
+    No A2A agent card at either the canonical /.well-known/agent-card.json or the legacy
+    /.well-known/agent.json path. Nothing was authored on Kueski's behalf.
+x-evidence:
+  fetched: '2026-08-04'
+  probe: HTTP GET, no credentials
+  hosts_probed: 6
+  paths_probed_per_host: 8
+  documents_found: 0

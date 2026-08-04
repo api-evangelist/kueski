@@ -1,0 +1,97 @@
+generated: '2026-08-04'
+method: derived
+source: >-
+  Derived from Kueski first-party published sources: the widgets.js bundle at
+  https://cdn.kueskipay.com/widgets.js and the KueskiPay Gateway WooCommerce plugin v2.4.1
+  (Author: Kueski) at https://wordpress.org/plugins/kueskipay-gateway/ ; confirmed against a live
+  unauthenticated probe of https://api.kueskipay.com/v1/configurations
+docs: https://github.com/kueski-dev/Dev-Center/wiki
+summary:
+  types: [http]
+  http_schemes: [bearer]
+  api_key_in: [header]
+  oauth2_flows: []
+  openid_connect: false
+  mutual_tls: false
+  note: >-
+    Kueski Pay authenticates with opaque merchant API keys presented as HTTP bearer tokens. There is
+    no OAuth 2.0, no OpenID Connect, and no scope surface — so no scopes/ artifact is emitted for
+    this provider. Merchants are issued a public key (safe for browser use, drives the widgets) and
+    a secret/private API key (server-side, drives order creation, sync and refunds). Both are
+    provisioned by Kueski to the merchant out of band via the merchant portal at
+    https://negocios.kueski.com/login — there is no self-service key-generation API.
+schemes:
+- name: merchantPublicKeyBearer
+  type: http
+  scheme: bearer
+  in: header
+  parameter_name: Authorization
+  format: 'Authorization: Bearer {merchant_public_key}'
+  audience: browser / client-side
+  used_by:
+  - api: Kueski Pay Widget Configuration API
+    host: https://api.kueskipay.com
+    sandbox_host: https://testing.kueskipay.com
+    operations:
+    - 'GET /v1/configurations?widget_type=product_widget'
+  distribution: >-
+    The public key is passed to the CDN widget loader as a query parameter —
+    https://cdn.kueskipay.com/widgets.js?authorization={public_key}&integration={platform}&version={v}&sandbox={true|false}
+    — and the widget then replays it as an Authorization bearer token against the configuration API.
+    It is a publishable key by design and is visible in merchant page source.
+  sources:
+  - https://cdn.kueskipay.com/widgets.js
+- name: merchantApiKeyBearer
+  type: http
+  scheme: bearer
+  in: header
+  parameter_name: Authorization
+  format: 'Authorization: Bearer {merchant_api_key}'
+  audience: server-to-server
+  used_by:
+  - api: Kueski Pay Merchant Orders API
+    host: https://woocommerce-middleware-go.production-pay.kueski.com/api/v1
+    sandbox_host: https://woocommerce-middleware-go.staging-pay.kueski.codes/api/v1
+    operations:
+    - 'GET /api/v1/merchant/validate-keys?api_key={merchant_api_key}'
+    - 'POST /api/v1/order/create'
+    - 'POST /api/v1/orders-sync'
+    - 'POST /api/v1/order/refund'
+  notes: >-
+    The key-validation operation is the exception to the bearer pattern — validate-keys accepts the
+    merchant API key as an api_key query-string parameter rather than an Authorization header. All
+    other merchant operations use the bearer header. Transporting a credential in the query string
+    means it can be captured in intermediary access logs; this is a design weakness worth raising
+    with Kueski.
+  sources:
+  - https://wordpress.org/plugins/kueskipay-gateway/
+key_management:
+  self_service: false
+  rotation_documented: false
+  expiry_documented: false
+  provisioning: >-
+    Keys ("API Publica" and "API Secreta") are supplied to the merchant by Kueski after merchant
+    onboarding at https://www.kueskipay.com/registro-comercios and are entered into the platform
+    plugin's settings screen. No public documentation describes key rotation, revocation or expiry.
+observed_failures:
+- condition: no Authorization header
+  http_status: 400
+  body: '{"status":"fail","code":"unauthorized","message":"no token provided"}'
+- condition: malformed or unknown bearer token
+  http_status: 400
+  body: '{"status":"fail","code":"unauthorized","message":"invalid token provided"}'
+- note: >-
+    Both authentication failures are returned as HTTP 400 Bad Request rather than 401 Unauthorized,
+    and neither emits a WWW-Authenticate challenge header. This is a real conformance deviation from
+    RFC 9110 section 15.5.2 and is recorded in conformance/kueski-conformance.yml.
+gaps:
+- No published authentication reference page; the auth model has to be reconstructed from
+  first-party plugin source and the widget bundle.
+- No OAuth 2.0 / OIDC surface, so no delegated access and no scoped, least-privilege credentials
+  for third-party or agent integrations.
+- No documented key rotation or revocation procedure.
+x-evidence:
+  fetched: '2026-08-04'
+  probes:
+  - {url: 'https://api.kueskipay.com/v1/configurations?widget_type=product_widget', http_status: 400, content_type: application/json}
+  - {url: 'https://cdn.kueskipay.com/widgets.js', http_status: 200, content_type: application/javascript}

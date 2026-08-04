@@ -1,18 +1,82 @@
 aid: kueski
 name: Kueski
-description: 'Kueski is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+x-enrichment:
+  date: '2026-08-04'
+  status: enriched
+  artifacts_added: 12
+  pass: local-v1
+description: 'Kueski is a Mexican financial technology company founded in 2012 and headquartered
+  in Guadalajara, Jalisco, offering online consumer credit across Mexico. Its flagship product,
+  Kueski Pay, is a buy-now-pay-later (BNPL) payment method that lets shoppers buy without a credit
+  card and repay in biweekly installments at thousands of online and physical merchants. Kueski also
+  offers personal loans and cash advances. For merchants, Kueski Pay is distributed as e-commerce
+  platform plugins (WooCommerce, Shopify, VTEX IO, Magento, PrestaShop, Tiendanube, T1 Paginas)
+  plus a JavaScript widget library and a bearer-token HTTP merchant API for order creation, order
+  synchronization and refunds. Kueski operates as a SOFOM E.N.R. regulated entity registered with
+  Mexico''s CONDUSEF.'
+image: https://cdn.prod.website-files.com/614d688b383096276930acef/64e2c5d130257b8c874270de_kueskipay.svg
 url: https://raw.githubusercontent.com/api-evangelist/kueski/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-04'
 modified: '2026-08-04'
 tags:
 - Company
-apis: []
+- Payments
+- Buy Now Pay Later
+- Lending
+- Fintech
+- Financial Services
+- Consumer Credit
+- E-Commerce
+- Checkout
+- Mexico
+- Latin America
+apis:
+- aid: kueski:kueski-pay-widget-configuration-api
+  name: Kueski Pay Widget Configuration API
+  description: 'The HTTP API behind the Kueski Pay merchant widgets. The widgets.js library
+    authenticates with the merchant public key as an HTTP bearer token and reads merchant
+    configuration and installment-messaging data used to render the product and cart widgets.
+    Separate production and testing (sandbox) hosts are selected by the widget sandbox parameter.'
+  humanURL: https://www.kueskipay.com/guias-de-integracion
+  baseURL: https://api.kueskipay.com
+  tags:
+  - Payments
+  - Buy Now Pay Later
+  - Widgets
+  - Checkout
+  - Configuration
+  properties:
+  - type: Documentation
+    url: https://github.com/kueski-dev/Dev-Center/wiki
+  - type: Authentication
+    url: authentication/kueski-authentication.yml
+  - type: ErrorCatalog
+    url: errors/kueski-problem-types.yml
+- aid: kueski:kueski-pay-merchant-orders-api
+  name: Kueski Pay Merchant Orders API
+  description: 'The merchant-facing Kueski Pay order API used by the first-party e-commerce
+    plugins. It validates merchant API keys, creates a Kueski Pay order and returns a hosted
+    checkout callback URL for redirect, synchronizes the status of previously created orders
+    (merchants poll; Kueski publishes no webhook surface), and issues full or partial refunds
+    against a payment. Authentication is an HTTP bearer token carrying the merchant API key.'
+  humanURL: https://github.com/kueski-dev/Dev-Center/wiki/WooCommerce
+  baseURL: https://woocommerce-middleware-go.production-pay.kueski.com/api/v1
+  tags:
+  - Payments
+  - Orders
+  - Refunds
+  - Buy Now Pay Later
+  - Checkout
+  properties:
+  - type: Documentation
+    url: https://github.com/kueski-dev/Dev-Center/wiki/WooCommerce
+  - type: Sandbox
+    url: sandbox/kueski-sandbox.yml
+  - type: Authentication
+    url: authentication/kueski-authentication.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -20,4 +84,52 @@ maintainers:
   email: info@apis.io
 common:
 - type: Website
-  url: https://forgeglobal.com/kueski_stock/
+  url: https://www.kueski.com/
+- type: DeveloperPortal
+  url: https://github.com/kueski-dev/Dev-Center/wiki
+- type: Documentation
+  url: https://www.kueskipay.com/guias-de-integracion
+- type: GettingStarted
+  url: https://www.kueskipay.com/para-comercios
+- type: GitHubOrganization
+  url: https://github.com/kueski-dev
+- type: Support
+  url: https://preguntas.frecuentes.kueski.com/hc/es/categories/14632860970907-Kueski-Pay
+- type: HelpCenter
+  url: https://kueskib2b.zendesk.com/hc/es-mx
+- type: Blog
+  url: https://blog.kueski.com/comercio-electronico/
+- type: SignUp
+  url: https://www.kueskipay.com/registro-comercios
+- type: Login
+  url: https://negocios.kueski.com/login
+- type: TermsOfService
+  url: https://www.kueskipay.com/tyc
+- type: PrivacyPolicy
+  url: https://preguntas.frecuentes.kueski.com/hc/es/articles/12385599806747-PRIVACY-NOTICE-FOR-THIRD-PARTIES-AND-COMMERCIAL-ALLIES-OF-KUESKI-SAPI-DE-CV-SOFOM-ENR
+- type: StatusPage
+  url: https://status.kueski.com/
+- type: Lifecycle
+  url: lifecycle/kueski-lifecycle.yml
+- type: ChangeLog
+  url: changelog/kueski-changelog.yml
+- type: Packages
+  url: packages/kueski-packages.yml
+- type: Components
+  url: components/kueski-components.yml
+- type: Conventions
+  url: conventions/kueski-conventions.yml
+- type: Authentication
+  url: authentication/kueski-authentication.yml
+- type: ErrorCatalog
+  url: errors/kueski-problem-types.yml
+- type: Conformance
+  url: conformance/kueski-conformance.yml
+- type: Sandbox
+  url: sandbox/kueski-sandbox.yml
+- type: WellKnown
+  url: well-known/kueski-well-known.yml
+- type: DomainSecurity
+  url: security/kueski-domain-security.yml
+- type: LLMsTxt
+  url: llms/kueski-llms.txt

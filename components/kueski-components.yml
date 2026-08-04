@@ -1,0 +1,106 @@
+generated: '2026-08-04'
+method: derived
+source: >-
+  Derived from the Kueski widget bundle at https://cdn.kueskipay.com/widgets.js and the
+  first-party KueskiPay Gateway WooCommerce plugin v2.4.1
+  (https://wordpress.org/plugins/kueskipay-gateway/)
+docs: https://www.kueskipay.com/guias-de-integracion
+summary: >-
+  Kueski Pay's client-side surface is a single loader script that registers two native Web
+  Components — an installment-messaging widget and an explainer modal — themed entirely through CSS
+  custom properties. Alongside them sits the hosted checkout page a shopper is redirected to. This
+  is Kueski's most polished developer surface and the only part of the integration that is
+  genuinely self-serve once a merchant has a public key.
+loader:
+  name: Kueski Pay Widgets
+  url: https://cdn.kueskipay.com/widgets.js
+  script_tag_id: kpay-advertising-script
+  parameters:
+  - {name: authorization, required: true, description: merchant public key, replayed as an HTTP bearer token to the configuration API}
+  - {name: integration, required: false, description: 'platform identifier, e.g. woocommerce'}
+  - {name: version, required: false, description: calling integration version}
+  - {name: sandbox, required: false, values: ['true', 'false'], description: selects testing.kueskipay.com instead of api.kueskipay.com}
+  global: KueskipayAdvertising
+  versioning: none — the URL is unversioned and the bundle is mutable
+  integrity: no SRI hash published
+families:
+- family: messaging-widgets
+  description: >-
+    Installment-messaging widgets rendered on merchant product and cart pages. They fetch merchant
+    configuration from GET /v1/configurations and display the biweekly payment breakdown for a given
+    price, with a call to action that opens the explainer modal.
+  components:
+  - name: kueskipay-widget
+    kind: web-component (custom element)
+    element: <kueskipay-widget>
+    contexts: [product page, cart page]
+    widget_types_observed: [product_widget]
+    note: >-
+      Registered via customElements.define. The merchant supplies the price; the widget resolves
+      the payment terms from the merchant's server-side configuration rather than computing them
+      client-side.
+- family: modals
+  description: Explainer overlay describing how Kueski Pay works and the shopper's payment options.
+  components:
+  - name: kueskipay-modal
+    kind: web-component (custom element)
+    element: <kueskipay-modal>
+    assets:
+    - https://cdn.kueskipay.com/widgets/assets/modal/modal-1.svg
+    - https://cdn.kueskipay.com/widgets/assets/modal/modal-2.svg
+    - https://cdn.kueskipay.com/widgets/assets/modal/modal-3.svg
+    - https://cdn.kueskipay.com/widgets/assets/modal-close-button.svg
+- family: hosted-checkout
+  description: >-
+    Kueski-hosted redirect checkout. POST /api/v1/order/create returns data.callback_url and the
+    merchant redirects the shopper there to authenticate, be underwritten and pick a repayment
+    plan. The merchant never handles shopper credit data.
+  components:
+  - name: Kueski Pay hosted checkout
+    kind: hosted-redirect
+    url: https://prod.kueskipay.com
+theming:
+  mechanism: CSS custom properties
+  prefix: '--kp-'
+  scope: >-
+    Roughly 40 custom properties covering brand colors, surfaces, text colors, typography scale,
+    button geometry, benefit-list layout and the how-it-works stepper.
+  examples:
+  - --kp-color-brand
+  - --kp-color-brand-primary
+  - --kp-color-surface
+  - --kp-color-text-default
+  - --kp-font-family
+  - --kp-font-size
+  - --kp-button-bg
+  - --kp-button-text-color
+  - --kp-button-radius
+  - --kp-modal-width
+  plugin_exposed_settings:
+  - product widget color, alignment, page block and custom block selector
+  - cart widget color, alignment, page block and custom block selector
+  - font size
+assets:
+  logos:
+  - https://cdn.kueskipay.com/widgets/assets/kueski-pay-logo.svg
+  - https://cdn.kueskipay.com/widgets/assets/kueski-pay-badge-logo.svg
+  - https://cdn.kueskipay.com/widgets/assets/kueski-pay-badge-logo-v2.svg
+  icons:
+  - https://cdn.kueskipay.com/widgets/assets/icon-regular-info.svg
+third_party_loads:
+  note: >-
+    The bundle pulls fonts from fonts.googleapis.com and loads Google Tag Manager
+    (GTM-PMLMKZG) into the merchant's page, and contains hooks for Amplitude experiments and
+    analytics. Merchants embedding the widget should be aware it introduces third-party requests
+    into their checkout funnel.
+  hosts: [fonts.googleapis.com, www.googletagmanager.com]
+gaps:
+- No published component reference — element names, attributes and the entire --kp-* theming
+  vocabulary are undocumented and were recovered from the bundle.
+- Unversioned, non-pinnable loader URL with no SRI integrity hash.
+- Only the product widget type is observable; the cart widget is configurable in the plugin but its
+  widget_type value is not exposed publicly.
+x-evidence:
+  fetched: '2026-08-04'
+  probes:
+  - {url: 'https://cdn.kueskipay.com/widgets.js', http_status: 200, bytes: 46400}

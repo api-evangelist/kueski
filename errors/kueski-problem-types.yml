@@ -1,0 +1,88 @@
+generated: '2026-08-04'
+method: probed
+source: >-
+  Live unauthenticated probes of https://api.kueskipay.com/v1/configurations plus error handling
+  observed in the first-party KueskiPay Gateway WooCommerce plugin v2.4.1
+  (https://wordpress.org/plugins/kueskipay-gateway/)
+format: proprietary
+rfc9457: false
+envelope:
+  content_type: application/json
+  fields:
+  - {name: status, type: string, values: [success, fail], required: true}
+  - {name: code, type: string, description: machine-readable error slug, required: false}
+  - {name: message, type: string, description: human-readable message, sometimes Spanish, required: false}
+  - {name: data, type: object, description: present on success responses, required: false}
+  example_error: '{"status":"fail","code":"unauthorized","message":"no token provided"}'
+  example_success_shape: '{"status":"success","data":{...}}'
+problems:
+- code: unauthorized
+  http_status: 400
+  title: No token provided
+  message_observed: no token provided
+  cause: The Authorization request header was absent.
+  remediation: >-
+    Send Authorization: Bearer {merchant_api_key}. For widget calls this is the merchant public key
+    passed to the widgets.js loader; for merchant order calls it is the merchant API key.
+  observed_on: 'GET https://api.kueskipay.com/v1/configurations?widget_type=product_widget'
+  method: probed
+- code: unauthorized
+  http_status: 400
+  title: Invalid token provided
+  message_observed: invalid token provided
+  cause: The bearer token was present but is malformed, unknown, or not valid for this environment.
+  remediation: >-
+    Confirm the key matches the environment being called — a production key sent to
+    testing.kueskipay.com (or vice versa) is rejected as invalid. Re-check the key issued in the
+    merchant portal at https://negocios.kueski.com/login.
+  observed_on: 'GET https://api.kueskipay.com/v1/configurations?widget_type=product_widget'
+  method: probed
+- code: null
+  http_status: 404
+  title: Not found
+  cause: >-
+    Unknown path on api.kueskipay.com / testing.kueskipay.com. The API host root and every
+    documentation, specification and /.well-known/ path return 404.
+  remediation: Verify the path; only /v1/configurations is publicly observable on this host.
+  method: probed
+client_side_failure_handling:
+  note: >-
+    The first-party plugin treats any non-200 status from POST /api/v1/order/create as a failure and
+    synthesizes its own client-side envelope of the same shape, so merchant code sees a uniform
+    {status: fail, message} regardless of whether the failure was transport-level or API-level.
+  synthesized_envelope: '{"status":"fail","message":"<transport exception message>"}'
+  client_timeout_seconds: 120
+conformance_notes:
+- id: status-code-semantics
+  finding: >-
+    Authentication failures are returned with HTTP 400 Bad Request rather than 401 Unauthorized, and
+    no WWW-Authenticate header accompanies them. Generic HTTP clients, API gateways and agent
+    runtimes that branch on status code will classify a credential problem as a malformed request
+    and will not trigger a re-authentication path.
+  deviates_from: RFC 9110 section 15.5.2
+- id: no-problem-details
+  finding: >-
+    Responses are application/json with a proprietary status/code/message envelope rather than
+    application/problem+json with a type URI (RFC 9457). There is no dereferenceable error type
+    registry.
+  deviates_from: RFC 9457
+gaps:
+- No published error reference. Kueski documents no error codes anywhere on its public developer
+  surface, so this catalog is limited to what could be observed live plus what the first-party
+  plugin source handles.
+- No documented decline / rejection code vocabulary for declined BNPL applications. Kueski Pay is
+  a lending decision at checkout, so the reasons an order is declined are the most commercially
+  significant errors in the product and none are published. No errors/kueski-decline-codes.yml is
+  emitted because no decline-code reference exists to capture — it was not invented.
+x-evidence:
+  fetched: '2026-08-04'
+  probes:
+  - url: 'https://api.kueskipay.com/v1/configurations?widget_type=product_widget'
+    http_status: 400
+    content_type: application/json
+    body: '{"status":"fail","code":"unauthorized","message":"no token provided"}'
+  - url: 'https://api.kueskipay.com/v1/configurations?widget_type=product_widget'
+    request_header: 'Authorization: Bearer <invalid>'
+    http_status: 400
+    content_type: application/json
+    body: '{"status":"fail","code":"unauthorized","message":"invalid token provided"}'

@@ -1,0 +1,151 @@
+generated: '2026-08-04'
+method: derived
+source: >-
+  Derived from live probes of https://api.kueskipay.com/v1/configurations, the Kueski widget bundle
+  and the first-party KueskiPay Gateway WooCommerce plugin v2.4.1; regulatory registration checked
+  against Kueski's own public disclosures.
+summary: >-
+  Kueski Pay is a plain JSON-over-HTTPS API with no adopted API standards. It publishes no OpenAPI,
+  AsyncAPI, JSON Schema or GraphQL contract, implements no OAuth 2.0 / OIDC, uses a proprietary
+  error envelope rather than RFC 9457, and serves no /.well-known/ discovery documents. It does
+  conform on transport security. Regulatory conformance as a Mexican SOFOM E.N.R. is real and
+  self-disclosed; information-security certifications are claimed only by third-party review sites
+  and could not be verified against a first-party source, so they are recorded as unverified.
+standards:
+- id: openapi
+  conforms: false
+  evidence: >-
+    No OpenAPI or Swagger document at any probed location on api.kueskipay.com,
+    testing.kueskipay.com, woocommerce-middleware-go.production-pay.kueski.com or the docs host —
+    /openapi.json, /openapi.yaml, /swagger.json, /v1/openapi.json, /api-docs, /docs and /redoc all
+    return 404 (or 403 on the CDN-fronted hosts).
+- id: asyncapi
+  conforms: false
+  evidence: No event or streaming surface exists; order state is retrieved by merchant polling.
+- id: json-schema
+  conforms: false
+  evidence: No published schemas for request or response bodies.
+- id: graphql
+  conforms: false
+  evidence: No /graphql surface found on any host.
+- id: oauth2
+  conforms: false
+  evidence: >-
+    Authentication is an opaque merchant API key presented as an HTTP bearer token. No authorization
+    server, no token endpoint, no /.well-known/oauth-authorization-server (404 on every host).
+- id: oidc
+  conforms: false
+  evidence: /.well-known/openid-configuration returns 404 on every host.
+- id: rfc6750-bearer-token-usage
+  conforms: partial
+  evidence: >-
+    Credentials are transported per RFC 6750 section 2.1 (Authorization request header, Bearer
+    scheme), but the error responses do not follow section 3 — no WWW-Authenticate challenge is
+    returned and authentication failures use 400 rather than 401.
+- id: rfc9110-status-semantics
+  conforms: false
+  evidence: >-
+    Authentication failures return HTTP 400 Bad Request instead of 401 Unauthorized. Observed on
+    GET https://api.kueskipay.com/v1/configurations both with no token and with an invalid token.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    Errors are application/json with a proprietary {status, code, message} envelope. No
+    application/problem+json, no type URI.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: /.well-known/security.txt returns 404 on all six probed Kueski hosts.
+- id: rfc9727-api-catalog
+  conforms: false
+  evidence: /.well-known/api-catalog returns 404 on all probed hosts.
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: No Sunset or Deprecation headers observed; no deprecation policy published.
+- id: a2a-agent-card
+  conforms: false
+  evidence: >-
+    Neither /.well-known/agent-card.json nor the legacy /.well-known/agent.json resolves on any
+    Kueski host (404 across the board). No card was authored on Kueski's behalf.
+- id: mcp
+  conforms: false
+  evidence: No hosted Model Context Protocol server found in docs, registries or on any Kueski host.
+- id: llms-txt
+  conforms: false
+  evidence: /llms.txt returns 404 on every Kueski host including the marketing and docs surfaces.
+- id: cors
+  conforms: true
+  evidence: >-
+    The edge returns access-control-allow-origin, access-control-allow-headers and
+    access-control-allow-methods (POST, OPTIONS, GET), enabling the browser widget integration.
+- id: tls-1.2-plus
+  conforms: true
+  evidence: >-
+    security/kueski-domain-security.yml — TLSv1.3 on www.kueski.com and www.kueskipay.com, TLSv1.2
+    on api.kueskipay.com.
+- id: hsts
+  conforms: partial
+  evidence: >-
+    HSTS with max-age 31536000 on www.kueski.com and www.kueskipay.com; absent on the
+    api.kueskipay.com API host.
+- id: dnssec
+  conforms: false
+  evidence: DNSSEC not enabled on kueski.com or kueskipay.com.
+- id: caa
+  conforms: false
+  evidence: No CAA records published for kueski.com or kueskipay.com.
+- id: spf-dmarc
+  conforms: true
+  evidence: SPF present and DMARC published with p=reject on both kueski.com and kueskipay.com.
+- id: pci-dss
+  conforms: unverified
+  evidence: >-
+    Kueski Pay is not a card-acquiring product — no PAN is handled in the merchant integration and
+    the shopper is redirected to a Kueski-hosted page. PCI DSS compliance is asserted by third-party
+    Mexican financial review sites but no first-party Kueski attestation, AOC or trust page could be
+    retrieved; Kueski's own security help-centre article sits behind a Cloudflare challenge that
+    returns 403 to unauthenticated fetches. Recorded as unverified rather than claimed.
+- id: iso-27001
+  conforms: unverified
+  evidence: >-
+    ISO/IEC 27001 certification is asserted by third-party review sites only. No first-party
+    certificate, certification-body registry entry or trust page was reachable. Recorded as
+    unverified — no `Compliance` pointer is wired in apis.yml on third-party evidence alone.
+- id: soc2
+  conforms: false
+  evidence: No SOC 2 claim found on any first-party or third-party source.
+regulatory:
+- id: mx-sofom-enr
+  conforms: true
+  evidence: >-
+    Kueski S.A.P.I. de C.V., SOFOM E.N.R. — a Sociedad Financiera de Objeto Multiple, Entidad No
+    Regulada, named as such in Kueski's own published privacy notices.
+  authority: Mexico
+- id: mx-condusef-sipres
+  conforms: true
+  evidence: >-
+    Registered in CONDUSEF's SIPRES registry; Kueski links merchants and consumers to
+    https://webapps.condusef.gob.mx/SIPRES/jsp/pub/index.jsp from its own site.
+  authority: CONDUSEF (Mexico)
+- id: mx-buro-de-entidades-financieras
+  conforms: true
+  evidence: Kueski publishes a Buro de Entidades Financieras link (www.buro.gob.mx) on its own site.
+  authority: Mexico
+- id: mx-lfpdppp-privacy-notice
+  conforms: true
+  evidence: >-
+    Published aviso de privacidad integral for customers and a separate privacy notice for third
+    parties and commercial allies, as required under Mexico's federal data protection law.
+gaps:
+- No machine-readable API contract of any kind, in any format.
+- No standards-based authorization; opaque bearer keys only, with no scopes and no delegation.
+- Error handling conforms to neither RFC 9457 nor RFC 9110 status semantics.
+- No security.txt, no api-catalog, no agent card, no llms.txt.
+- Security certifications are unverifiable from any first-party public surface.
+x-evidence:
+  fetched: '2026-08-04'
+  probes:
+  - {url: 'https://api.kueskipay.com/v1/configurations?widget_type=product_widget', http_status: 400}
+  - {url: 'https://api.kueskipay.com/openapi.json', http_status: 404}
+  - {url: 'https://api.kueskipay.com/.well-known/security.txt', http_status: 404}
+  - {url: 'https://api.kueskipay.com/.well-known/agent-card.json', http_status: 404}
+  - {url: 'https://preguntas.frecuentes.kueski.com/hc/es/articles/9548110501019--C%C3%B3mo-Kueski-maneja-su-seguridad', http_status: 403, note: Cloudflare managed challenge}
