@@ -27,6 +27,18 @@ tags:
 - Buy Now Pay Later
 - Lending
 - Fintech
+- Financial-Services
+- Consumer Credit
+- E-Commerce
+- Checkout
+- Mexico
+- Latin America
+tags_raw:
+- Company
+- Payments
+- Buy Now Pay Later
+- Lending
+- Fintech
 - Financial Services
 - Consumer Credit
 - E-Commerce
@@ -65,6 +77,12 @@ apis:
   humanURL: https://github.com/kueski-dev/Dev-Center/wiki/WooCommerce
   baseURL: https://woocommerce-middleware-go.production-pay.kueski.com/api/v1
   tags:
+  - Payments
+  - Order
+  - Refunds
+  - Buy Now Pay Later
+  - Checkout
+  tags_raw:
   - Payments
   - Orders
   - Refunds
