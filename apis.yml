@@ -14,6 +14,17 @@ description: 'Kueski is a Mexican financial technology company founded in 2012 a
   plus a JavaScript widget library and a bearer-token HTTP merchant API for order creation, order
   synchronization and refunds. Kueski operates as a SOFOM E.N.R. regulated entity registered with
   Mexico''s CONDUSEF.'
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://cdn.prod.website-files.com/614d688b383096276930acef/64e2c5d130257b8c874270de_kueskipay.svg
 url: https://raw.githubusercontent.com/api-evangelist/kueski/refs/heads/main/apis.yml
 x-type: company
