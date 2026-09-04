@@ -25,6 +25,19 @@ deliveryModel:
   - pricing
   generated: '2026-08-28'
   method: derived
+accessModel:
+  pricing: unknown
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Unknown
+  confidence: low
+  source:
+  - authentication
+  - security
+  generated: '2026-09-03'
+  method: derived
 image: https://cdn.prod.website-files.com/614d688b383096276930acef/64e2c5d130257b8c874270de_kueskipay.svg
 url: https://raw.githubusercontent.com/api-evangelist/kueski/refs/heads/main/apis.yml
 x-type: company
