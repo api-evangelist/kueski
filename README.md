@@ -64,5 +64,94 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Kueski is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://forgeglobal.com/kueski_stock/
+Kueski is a Mexican financial technology company founded in 2012 and headquartered in Guadalajara, Jalisco, offering online consumer credit across Mexico. Its flagship product, Kueski Pay, is a buy-now-pay-later (BNPL) payment method that lets shoppers buy without a credit card and repay in biweekly installments at thousands of online and physical merchants. Kueski also offers personal loans and cash advances. For merchants, Kueski Pay is distributed as e-commerce platform plugins (WooCommerce, Shopify, VTEX IO, Magento, PrestaShop, Tiendanube, T1 Paginas) plus a JavaScript widget library and a bearer-token HTTP merchant API for order creation, order synchronization and refunds. Kueski operates as a SOFOM E.N.R. regulated entity registered with Mexico's CONDUSEF.
+
+**Areas:** Company · Payments · Buy Now Pay Later · Lending · Fintech · Financial Services · Consumer Credit · E-Commerce · Checkout · Mexico · Latin America
+
+## Kueski on APIs.io
+
+Everything profiled for Kueski is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/kueski/](https://apis.io/providers/kueski/)** — or go straight to one of the APIs or properties below.
+
+### APIs (2)
+
+- [Kueski Pay Widget Configuration API](https://apis.io/apis/kueski/kueski-pay-widget-configuration-api/) — The HTTP API behind the Kueski Pay merchant widgets. The widgets.js library authenticates with the merchant public key as an HTTP bearer token and reads…
+- [Kueski Pay Merchant Orders API](https://apis.io/apis/kueski/kueski-pay-merchant-orders-api/) — The merchant-facing Kueski Pay order API used by the first-party e-commerce plugins. It validates merchant API keys, creates a Kueski Pay order and returns…
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Kueski Authentication](https://apis.io/security/kueski/kueski-authentication/)
+- [Kueski Domain Security](https://apis.io/security/kueski/kueski-domain-security/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.kueski.com/)
+- [Documentation](https://www.kueskipay.com/guias-de-integracion)
+- [Getting started](https://www.kueskipay.com/para-comercios)
+- [Sign up](https://www.kueskipay.com/registro-comercios)
+- [Support](https://preguntas.frecuentes.kueski.com/hc/es/categories/14632860970907-Kueski-Pay)
+- [Blog](https://blog.kueski.com/comercio-electronico/)
+- [Terms of service](https://www.kueskipay.com/tyc)
+- [Privacy policy](https://preguntas.frecuentes.kueski.com/hc/es/articles/12385599806747-PRIVACY-NOTICE-FOR-THIRD-PARTIES-AND-COMMERCIAL-ALLIES-OF-KUESKI-SAPI-DE-CV-SOFOM-ENR)
+- [GitHub](https://github.com/kueski-dev)
+- [Status](https://status.kueski.com/)
+
+## API Evangelist rating
+
+**Kin Score 29.8** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 0.0 |
+| Contract governance | 4.5 |
+| Operational transparency | 34.2 |
+| Developer ergonomics | 54.8 |
+| Access clarity | 34.2 |
+
+**Agent readiness 5.4** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | — |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 22.3** — Payments
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/kueski/](https://apis.io/providers/kueski/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Kueski: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/kueski/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
